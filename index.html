@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Twisted Matrix Labs (Demo Site) &#8212; Twisted  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/pyramid.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Code Examples" href="code-examples/index.html" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head><body>
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="code-examples/index.html" title="Code Examples"
+             accesskey="N">next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">Twisted  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Twisted Matrix Labs (Demo Site)</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="twisted-matrix-labs-demo-site">
+<h1>Twisted Matrix Labs (Demo Site)<a class="headerlink" href="#twisted-matrix-labs-demo-site" title="Permalink to this headline">¶</a></h1>
+<section id="what-is-twisted">
+<h2>What is Twisted?<a class="headerlink" href="#what-is-twisted" title="Permalink to this headline">¶</a></h2>
+<p>Twisted is an event-driven networking engine written in Python and licensed under the open source ​MIT license. It supports CPython 3.6+ and PyPy3.</p>
+</section>
+<section id="get-started-with-pip">
+<h2>Get Started with Pip<a class="headerlink" href="#get-started-with-pip" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python -m venv try-twisted
+$ . try-twisted/bin/activate
+$ pip install twisted[tls]
+$ twist --help
+</pre></div>
+</div>
+</section>
+<section id="code-example">
+<h2>Code Example<a class="headerlink" href="#code-example" title="Permalink to this headline">¶</a></h2>
+<p>Twisted includes an event-driven web server.
+Here’s a sample web application;
+notice how the resource object persists in memory,
+rather than being recreated on each request:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">twisted.web</span> <span class="kn">import</span> <span class="n">server</span><span class="p">,</span> <span class="n">resource</span>
+<span class="kn">from</span> <span class="nn">twisted.internet</span> <span class="kn">import</span> <span class="n">reactor</span><span class="p">,</span> <span class="n">endpoints</span>
+
+<span class="k">class</span> <span class="nc">Counter</span><span class="p">(</span><span class="n">resource</span><span class="o">.</span><span class="n">Resource</span><span class="p">):</span>
+    <span class="n">isLeaf</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">numberRequests</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">render_GET</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numberRequests</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">request</span><span class="o">.</span><span class="n">setHeader</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;content-type&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;text/plain&quot;</span><span class="p">)</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">&quot;I am request #</span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numberRequests</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">content</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">)</span>
+
+<span class="n">endpoints</span><span class="o">.</span><span class="n">serverFromString</span><span class="p">(</span><span class="n">reactor</span><span class="p">,</span> <span class="s2">&quot;tcp:8080&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="n">server</span><span class="o">.</span><span class="n">Site</span><span class="p">(</span><span class="n">Counter</span><span class="p">()))</span>
+<span class="n">reactor</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>See
+<a class="reference internal" href="code-examples/index.html"><span class="doc">Code Examples</span></a>.</p>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Twisted Matrix Labs (Demo Site)</a><ul>
+<li><a class="reference internal" href="#what-is-twisted">What is Twisted?</a></li>
+<li><a class="reference internal" href="#get-started-with-pip">Get Started with Pip</a></li>
+<li><a class="reference internal" href="#code-example">Code Example</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Next topic</h4>
+  <p class="topless"><a href="code-examples/index.html"
+                        title="next chapter">Code Examples</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="code-examples/index.html" title="Code Examples"
+             >next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">Twisted  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Twisted Matrix Labs (Demo Site)</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Twisted Matrix Labs.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.1.2.
+    </div>
+  </body>
+</html>
